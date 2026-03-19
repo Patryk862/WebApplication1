@@ -222,3 +222,4 @@
 /Users/patrykromanowicz/Desktop/studia/sem4/net/wprawka/WebApplication1/obj/Debug/net10.0/WebApplication1.pdb
 /Users/patrykromanowicz/Desktop/studia/sem4/net/wprawka/WebApplication1/obj/Debug/net10.0/WebApplication1.genruntimeconfig.cache
 /Users/patrykromanowicz/Desktop/studia/sem4/net/wprawka/WebApplication1/obj/Debug/net10.0/ref/WebApplication1.dll
+/Users/patrykromanowicz/Desktop/studia/sem4/net/wprawka/WebApplication1/obj/Debug/net10.0/WebApplication1.sourcelink.json
