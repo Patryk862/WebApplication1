@@ -10,6 +10,5 @@ public class Wydawnictwo
     [MaxLength(100)]
     public string Nazwa { get; set; }
 
-    // Relacja 1:N
     public ICollection<Ksiazka> Ksiazki { get; set; } = new List<Ksiazka>();
 }

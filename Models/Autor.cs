@@ -14,6 +14,5 @@ public class Autor
     [MaxLength(50)]
     public string Nazwisko { get; set; }
 
-    // Relacja N:M
     public ICollection<KsiazkaAutor> KsiazkaAutorzy { get; set; } = new List<KsiazkaAutor>();
 }
