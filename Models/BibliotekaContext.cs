@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Models;
 
-public class BibliotekaContext : DbContext
+public class BibliotekaContext : IdentityDbContext 
 {
     public BibliotekaContext(DbContextOptions<BibliotekaContext> options) : base(options) { }
 
@@ -13,6 +14,8 @@ public class BibliotekaContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<KsiazkaAutor>()
             .HasKey(ka => new { ka.KsiazkaId, ka.AutorId });
 

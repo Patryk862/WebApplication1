@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Models;
+using System.Security.Claims; // <-- NIEZBĘDNE DO POBRANIA ID UŻYTKOWNIKA
 
 namespace WebApplication1
 {
+    [Authorize]
     public class KsiazkiController : Controller
     {
         private readonly BibliotekaContext _context;
@@ -18,7 +21,7 @@ namespace WebApplication1
             _context = context;
         }
 
-        // GET: Ksiazki
+        [AllowAnonymous]
         public async Task<IActionResult> Index(string searchString)
         {
             var ksiazki = _context.Ksiazki.Include(k => k.Wydawnictwo).AsQueryable();
@@ -32,41 +35,36 @@ namespace WebApplication1
             return View(await ksiazki.ToListAsync());
         }
 
-        // GET: Ksiazki/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var ksiazka = await _context.Ksiazki
                 .Include(k => k.Wydawnictwo)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ksiazka == null)
-            {
-                return NotFound();
-            }
+            if (ksiazka == null) return NotFound();
 
             return View(ksiazka);
         }
 
-        // GET: Ksiazki/Create
         public IActionResult Create()
         {
             ViewData["WydawnictwoId"] = new SelectList(_context.Wydawnictwa, "Id", "Nazwa");
             return View();
         }
 
-        // POST: Ksiazki/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Tytul,WydawnictwoId")] Ksiazka ksiazka)
         {
+            // 1. ZAPISUJEMY WŁAŚCICIELA KSIĄŻKI
+            ksiazka.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
             ModelState.Remove("Wydawnictwo");
             ModelState.Remove("KsiazkaAutorzy");
+            ModelState.Remove("UserId"); // Ignorujemy walidację tego pola z formularza
+
             if (ModelState.IsValid)
             {
                 _context.Add(ksiazka);
@@ -77,34 +75,38 @@ namespace WebApplication1
             return View(ksiazka);
         }
 
-        // GET: Ksiazki/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var ksiazka = await _context.Ksiazki.FindAsync(id);
-            if (ksiazka == null)
+            if (ksiazka == null) return NotFound();
+
+            // 2. OCHRONA: CZY TO TWOJA KSIĄŻKA?
+            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
-                return NotFound();
+                return Forbid(); // Zwraca błąd odmowy dostępu
             }
+
             ViewData["WydawnictwoId"] = new SelectList(_context.Wydawnictwa, "Id", "Nazwa", ksiazka.WydawnictwoId);
             return View(ksiazka);
         }
 
-        // POST: Ksiazki/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Tytul,WydawnictwoId")] Ksiazka ksiazka)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Tytul,WydawnictwoId,UserId")] Ksiazka ksiazka)
         {
-            if (id != ksiazka.Id)
+            if (id != ksiazka.Id) return NotFound();
+
+            // Zabezpieczenie przed atakiem (nie pozwalamy zmienić właściciela w ukryciu)
+            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
-                return NotFound();
+                return Forbid();
             }
+
+            ModelState.Remove("Wydawnictwo");
+            ModelState.Remove("KsiazkaAutorzy");
+            ModelState.Remove("UserId");
 
             if (ModelState.IsValid)
             {
@@ -115,14 +117,8 @@ namespace WebApplication1
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!KsiazkaExists(ksiazka.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!KsiazkaExists(ksiazka.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -130,37 +126,37 @@ namespace WebApplication1
             return View(ksiazka);
         }
 
-        // GET: Ksiazki/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var ksiazka = await _context.Ksiazki
                 .Include(k => k.Wydawnictwo)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ksiazka == null)
+            if (ksiazka == null) return NotFound();
+
+            // 3. OCHRONA PRZED USUNIĘCIEM CUDZEJ KSIĄŻKI
+            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(ksiazka);
         }
 
-        // POST: Ksiazki/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ksiazka = await _context.Ksiazki.FindAsync(id);
-            if (ksiazka != null)
+            
+            // 4. OSTATNIA LINIA OBRONY PRZED FAKTYCZNYM USUNIĘCIEM
+            if (ksiazka != null && ksiazka.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 _context.Ksiazki.Remove(ksiazka);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

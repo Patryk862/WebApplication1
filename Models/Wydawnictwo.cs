@@ -9,6 +9,7 @@ public class Wydawnictwo
     [Required]
     [MaxLength(100)]
     public string Nazwa { get; set; }
+    public string? UserId { get; set; }
 
     public ICollection<Ksiazka> Ksiazki { get; set; } = new List<Ksiazka>();
 }
