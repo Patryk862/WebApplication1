@@ -19,7 +19,7 @@ public class HomeController : Controller
 
     // --- NASZA NOWA METODA WYLOGOWYWANIA ---
     [HttpPost]
-    public async Task<IActionResult> Logout([FromServices] SignInManager<IdentityUser> signInManager)
+    public async Task<IActionResult> Logout([FromServices] SignInManager<Uzytkownik> signInManager)
     {
         // 1. Wykonuje fizyczne usunięcie ciasteczka (wylogowanie)
         await signInManager.SignOutAsync();

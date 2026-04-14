@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Models;
 
-public class BibliotekaContext : IdentityDbContext 
+public class BibliotekaContext : IdentityDbContext<Uzytkownik> 
 {
     public BibliotekaContext(DbContextOptions<BibliotekaContext> options) : base(options) { }
 

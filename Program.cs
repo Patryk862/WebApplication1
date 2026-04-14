@@ -13,7 +13,7 @@ builder.Services.AddDbContext<BibliotekaContext>(options =>
 
 // 2. KONFIGURACJA SYSTEMU LOGOWANIA (Identity)
 // Ustawienia haseł zgodne z Twoją instrukcją PDF
-builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+builder.Services.AddDefaultIdentity<Uzytkownik>(options => {
     options.SignIn.RequireConfirmedAccount = false; // Brak wymogu potwierdzenia e-mail
     options.Password.RequireDigit = false;          // Brak wymogu cyfr
     options.Password.RequiredLength = 6;           // Min. 6 znaków
