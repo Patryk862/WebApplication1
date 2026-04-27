@@ -1,0 +1,22 @@
+@{ ViewData["Title"] = "Logowanie"; }
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <form asp-action="Login" method="post" class="card p-4 shadow-sm">
+            <h4 class="text-center">Logowanie</h4>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-floating mb-3">
+                <input name="login" class="form-control" required />
+                <label>Login</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" name="haslo" class="form-control" required />
+                <label>Hasło</label>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Zaloguj</button>
+            <div class="text-center mt-3"><a asp-action="Register">Nie masz konta? Zarejestruj się</a></div>
+        </form>
+    </div>
+</div>

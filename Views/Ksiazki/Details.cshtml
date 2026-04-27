@@ -1,13 +1,7 @@
 @model WebApplication1.Models.Ksiazka
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<Uzytkownik> UserManager
 
 @{
     ViewData["Title"] = "Szczegóły Książki";
-    
-    // Szukamy użytkownika po jego ID
-    var creator = Model.UserId != null ? await UserManager.FindByIdAsync(Model.UserId) : null;
-    var creatorEmail = creator?.Email ?? "Nieznany użytkownik";
 }
 
 <h1>Szczegóły</h1>
@@ -23,22 +17,15 @@
             @Html.DisplayFor(model => model.Tytul)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Wydawnictwo)
+            Wydawnictwo
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Wydawnictwo.Nazwa)
         </dd>
-        
-        <dt class="col-sm-2">
-            Dodał(a)
-        </dt>
-        <dd class="col-sm-10 text-primary">
-            @creatorEmail
-        </dd>
     </dl>
 </div>
 <div class="mt-3">
-    @if (User.Identity!.IsAuthenticated && Model.UserId == UserManager.GetUserId(User))
+    @if (User.Identity!.IsAuthenticated && Model.UserId?.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Edytuj</a> @Html.Raw(" | ")
     }

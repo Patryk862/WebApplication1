@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Brak Dostępu";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center card p-5 shadow-sm border-danger">
+        <h1 class="text-danger display-1 fw-bold">403</h1>
+        <h2 class="mb-4">Odmowa dostępu</h2>
+        <p class="lead">
+            Nie masz uprawnień, aby modyfikować lub usunąć ten zasób. 
+            Operacja została zablokowana, ponieważ wpis należy do innego użytkownika.
+        </p>
+        <div class="mt-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Wróć na stronę główną</a>
+        </div>
+    </div>
+</div>

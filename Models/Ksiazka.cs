@@ -12,7 +12,7 @@ public class Ksiazka
 
     public int WydawnictwoId { get; set; }
     public Wydawnictwo Wydawnictwo { get; set; }
-    public string? UserId { get; set; }
+    public int? UserId { get; set; }
 
     public ICollection<KsiazkaAutor> KsiazkaAutorzy { get; set; } = new List<KsiazkaAutor>();
 }

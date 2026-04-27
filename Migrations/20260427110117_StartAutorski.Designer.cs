@@ -11,8 +11,8 @@ using WebApplication1.Models;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(BibliotekaContext))]
-    [Migration("20260323154517_InicjalizacjaKsiegarni")]
-    partial class InicjalizacjaKsiegarni
+    [Migration("20260427110117_StartAutorski")]
+    partial class StartAutorski
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,6 +60,9 @@ namespace WebApplication1.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("WydawnictwoId")
                         .HasColumnType("int");
 
@@ -85,6 +88,39 @@ namespace WebApplication1.Migrations
                     b.ToTable("KsiazkaAutorzy");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Uzytkownik", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HasloHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Imie")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nazwisko")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Uzytkownicy");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.Wydawnictwo", b =>
                 {
                     b.Property<int>("Id")
@@ -97,6 +133,9 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -59,7 +59,7 @@ namespace WebApplication1
         public async Task<IActionResult> Create([Bind("Id,Tytul,WydawnictwoId")] Ksiazka ksiazka)
         {
             // 1. ZAPISUJEMY WŁAŚCICIELA KSIĄŻKI
-            ksiazka.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ksiazka.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             
             ModelState.Remove("Wydawnictwo");
             ModelState.Remove("KsiazkaAutorzy");
@@ -83,7 +83,7 @@ namespace WebApplication1
             if (ksiazka == null) return NotFound();
 
             // 2. OCHRONA: CZY TO TWOJA KSIĄŻKA?
-            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (ksiazka.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid(); // Zwraca błąd odmowy dostępu
             }
@@ -99,7 +99,7 @@ namespace WebApplication1
             if (id != ksiazka.Id) return NotFound();
 
             // Zabezpieczenie przed atakiem (nie pozwalamy zmienić właściciela w ukryciu)
-            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (ksiazka.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid();
             }
@@ -136,7 +136,7 @@ namespace WebApplication1
             if (ksiazka == null) return NotFound();
 
             // 3. OCHRONA PRZED USUNIĘCIEM CUDZEJ KSIĄŻKI
-            if (ksiazka.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (ksiazka.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid();
             }
@@ -151,7 +151,7 @@ namespace WebApplication1
             var ksiazka = await _context.Ksiazki.FindAsync(id);
             
             // 4. OSTATNIA LINIA OBRONY PRZED FAKTYCZNYM USUNIĘCIEM
-            if (ksiazka != null && ksiazka.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (ksiazka != null && ksiazka.UserId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 _context.Ksiazki.Remove(ksiazka);
                 await _context.SaveChangesAsync();

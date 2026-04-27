@@ -45,7 +45,7 @@ namespace WebApplication1
         public async Task<IActionResult> Create([Bind("Id,Nazwa")] Wydawnictwo wydawnictwo)
         {
             // 1. ZAPISUJEMY KTO TWORZY WPIS
-            wydawnictwo.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            wydawnictwo.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             
             // 2. Usuwamy to z walidacji, żeby serwer nie krzyczał, że pole było puste w formularzu
             ModelState.Remove("UserId");
@@ -67,7 +67,7 @@ namespace WebApplication1
             if (wydawnictwo == null) return NotFound();
 
             // 3. OCHRONA: CZY TO JEST TWÓJ WPIS?
-            if (wydawnictwo.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (wydawnictwo.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid(); // Odcięcie dostępu (Zwraca oficjalny błąd braku uprawnień)
             }
@@ -82,7 +82,7 @@ namespace WebApplication1
             if (id != wydawnictwo.Id) return NotFound();
 
             // Zabezpieczenie przed atakiem (nie pozwalamy zmienić właściciela)
-            if (wydawnictwo.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (wydawnictwo.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid();
             }
@@ -106,7 +106,7 @@ namespace WebApplication1
             if (wydawnictwo == null) return NotFound();
 
             // OCHRONA PRZED USUNIĘCIEM
-            if (wydawnictwo.UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (wydawnictwo.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))
             {
                 return Forbid();
             }
@@ -121,7 +121,7 @@ namespace WebApplication1
             var wydawnictwo = await _context.Wydawnictwa.FindAsync(id);
             
             // OSTATNIA LINIA OBRONY PRZED USUNIĘCIEM
-            if (wydawnictwo != null && wydawnictwo.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            if (wydawnictwo != null && wydawnictwo.UserId.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier))
             {
                 _context.Wydawnictwa.Remove(wydawnictwo);
                 await _context.SaveChangesAsync();

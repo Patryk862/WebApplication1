@@ -1,0 +1,35 @@
+@model WebApplication1.Models.Uzytkownik
+@{ ViewData["Title"] = "Rejestracja"; }
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <form asp-action="Register" method="post" class="card p-4 shadow-sm">
+            <h4 class="text-center">Załóż nowe konto</h4>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-floating mb-3">
+                <input asp-for="Login" class="form-control" required />
+                <label asp-for="Login">Login</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Imie" class="form-control" required />
+                <label asp-for="Imie">Imię</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Nazwisko" class="form-control" required />
+                <label asp-for="Nazwisko">Nazwisko</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" type="email" class="form-control" required />
+                <label asp-for="Email">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" name="Haslo" class="form-control" required />
+                <label>Hasło</label>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Zarejestruj się</button>
+            <div class="text-center mt-3"><a asp-action="Login">Masz już konto? Zaloguj się</a></div>
+        </form>
+    </div>
+</div>

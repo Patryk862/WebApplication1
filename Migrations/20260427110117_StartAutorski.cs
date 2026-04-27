@@ -5,7 +5,7 @@
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class InicjalizacjaKsiegarni : Migration
+    public partial class StartAutorski : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,12 +25,30 @@ namespace WebApplication1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Uzytkownicy",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasloHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Imie = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nazwisko = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Uzytkownicy", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Wydawnictwa",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nazwa = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Nazwa = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,7 +62,8 @@ namespace WebApplication1.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Tytul = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    WydawnictwoId = table.Column<int>(type: "int", nullable: false)
+                    WydawnictwoId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,6 +116,9 @@ namespace WebApplication1.Migrations
         {
             migrationBuilder.DropTable(
                 name: "KsiazkaAutorzy");
+
+            migrationBuilder.DropTable(
+                name: "Uzytkownicy");
 
             migrationBuilder.DropTable(
                 name: "Autorzy");
